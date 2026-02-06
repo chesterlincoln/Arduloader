@@ -5,13 +5,19 @@
 #Copyright: uname.github.io
 
 import sys
-sys.dont_write_bytecode = True
-from ArduloaderWindow import ArduloaderWindow
-from PyQt4.QtGui import QApplication
 
-if __name__ == "__main__":
+from PyQt6.QtWidgets import QApplication
+
+from ArduloaderWindow import ArduloaderWindow
+
+sys.dont_write_bytecode = True
+
+def main():
     app = QApplication(sys.argv)
-    app.setStyle("cleanlooks")
+    app.setStyle("Fusion")
     window = ArduloaderWindow()
     window.show()
-    sys.exit(app.exec_())
+    sys.exit(app.exec())
+
+if __name__ == "__main__":
+    main()

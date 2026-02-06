@@ -1,0 +1,17 @@
+[project]
+name = "arduloader"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "PyQt6>=6.7.0",
+    "pyserial>=3.5",
+]
+
+[project.scripts]
+arduloader = "main:main"
+
+# 配置uv的解析策略
+[tool.uv]
+resolution = "highest"  # 尝试使用最新可用版本

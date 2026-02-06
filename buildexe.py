@@ -3,7 +3,7 @@
 from distutils.core import setup
 import py2exe
 
-includes = ["sip", "PyQt4.QtGui", "PyQt4.QtCore"]
+includes = ["PyQt6.QtGui", "PyQt6.QtCore", "PyQt6.QtWidgets"]
             
 dll_excludes = ["msvcm90.dll", "msvcp90.dll", "msvcr90.dll"]
 

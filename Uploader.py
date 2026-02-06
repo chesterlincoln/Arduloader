@@ -1,22 +1,22 @@
 #-*- coding: utf-8 -*-
-from PyQt4.QtCore import QObject, SIGNAL
 import const
-import os
+import subprocess
 import threading
+from PyQt6 import QtCore
 
 def getstatusoutput(cmd):
     """Return (status, output) of executing cmd in a shell."""
-    pipe = os.popen(cmd + ' 2>&1', 'r')
-    text = pipe.read()
-    sts = pipe.close()
-    if sts is None: sts = 0
-    if text[-1:] == '\n': text = text[:-1]
-    return sts, text
+    result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
+    text = (result.stdout or "") + (result.stderr or "")
+    return result.returncode, text
+
+class UploadNotifier(QtCore.QObject):
+    finished = QtCore.pyqtSignal(int, str)
     
 class Uploader(threading.Thread):
     def __init__(self):
         threading.Thread.__init__(self)
-        self.qobj = QObject()
+        self.notifier = UploadNotifier()
         
         self.avrdude = const.avrdude
         self.avrdude_conf = const.avrconf
@@ -55,5 +55,5 @@ class Uploader(threading.Thread):
         
     def upload(self):
         ret, text = getstatusoutput(self.upload_cmd)
-        self.qobj.emit(SIGNAL(const.finish_sig), ret, text)
+        self.notifier.finished.emit(ret, text)
         

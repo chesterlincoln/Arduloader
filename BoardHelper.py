@@ -29,9 +29,8 @@ def __parseBoards(fp):
     
 def getBoardsInfo():
     try:
-        fp = open(const.boards_txt, "r")
-        boardsinfo = __parseBoards(fp)
-        fp.close()
+        with open(const.boards_txt, "r", encoding="utf-8", errors="replace") as fp:
+            boardsinfo = __parseBoards(fp)
         return True, boardsinfo
-    except Exception, e:
-        return False, repr(e)
+    except Exception as exc:
+        return False, repr(exc)

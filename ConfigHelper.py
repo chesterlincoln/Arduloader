@@ -1,6 +1,6 @@
 #-*- coding: utf-8 -*-
+import configparser
 import const
-from ConfigParser import ConfigParser
 
 class ConfigHelper:
     SEC_UPLOAD = "upload"
@@ -14,11 +14,11 @@ class ConfigHelper:
     def __init__(self, ui, cfgini=const.config):
         self.ui = ui
         self.cfgini = cfgini
-        self.cfg = ConfigParser()
+        self.cfg = configparser.ConfigParser()
         self.readCfg()
         
     def readCfg(self):
-        return len(self.cfg.read(self.cfgini)) > 0
+        return len(self.cfg.read(self.cfgini, encoding="utf-8")) > 0
     
     def getVal(self, section, key):
         if not self.cfg.has_section(section):
@@ -36,8 +36,9 @@ class ConfigHelper:
     
     def writeCfg(self):
         try:
-            self.cfg.write(open(self.cfgini, "w"))
-        except IOError:
+            with open(self.cfgini, "w", encoding="utf-8") as fp:
+                self.cfg.write(fp)
+        except OSError:
             pass
             
     def __updateUiAboutUpload(self):
@@ -63,14 +64,13 @@ class ConfigHelper:
     def __updateUiAboutUi(self):
         style = self.getVal(self.SEC_UI, self.KEY_STYLE)
         if style != "":
-            from PyQt4.QtGui import QApplication
+            from PyQt6.QtWidgets import QApplication
             QApplication.setStyle(style)
         
         progpaper = self.getVal(self.SEC_UI, self.KEY_PROGPAPER)
         if progpaper != "":
             from os import path as OSPath
-            from PyQt4.QtGui import QPixmap
-            progpaper = unicode(progpaper, "gbk")
+            from PyQt6.QtGui import QPixmap
             if OSPath.exists(progpaper):
                 self.ui.headLabel.setPixmap(QPixmap(progpaper).scaled(const.width, const.height))
     

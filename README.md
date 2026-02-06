@@ -3,12 +3,15 @@
 Arduloader is tool for uploading hex file to your Arduino board.
 It's implemented by Python.
 
-You can build exe file on Windows like this: python buildexe.py py2exe
+You can build exe file on Windows with an installer of your choice.
+
+Setup with uv (Python 3.13):
+1. uv python install 3.13
+2. uv sync
+3. uv run arduloader
 
 ![](https://github.com/uname/Arduloader/blob/master/snapshot.png)
 
 Dependences:
 1. Python
-2. PyQt4
-2. Py2exe(build exe file on Windows)
-
+2. PyQt6

@@ -8,19 +8,17 @@ from icons import *
 import const
 import BoardHelper
 
-from PyQt4.QtGui import QMainWindow
-from PyQt4.QtGui import QPixmap, QBitmap
-from PyQt4.QtGui import QPainter
-from PyQt4.QtGui import QColor
-from PyQt4 import QtGui
-from PyQt4 import QtCore
+from PyQt6 import QtCore, QtGui, QtWidgets
 
-tostr = lambda qstr: qstr.toUtf8().data()
-togbk = lambda qstr: unicode(tostr(qstr), "utf-8").encode("gbk")
+def tostr(text):
+    return str(text)
 
-class ArduloaderWindow(QMainWindow):
+def togbk(text):
+    return str(text)
+
+class ArduloaderWindow(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
-        QMainWindow.__init__(self)
+        super().__init__(parent=parent)
         
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
@@ -32,7 +30,7 @@ class ArduloaderWindow(QMainWindow):
     def setupUi_Ex(self):
         self.setWindowTitle(const.windowtitle)
         self.ui.textEdit.append(const.aboutinfo)
-        self.ui.headLabel.setPixmap(QPixmap(":/main/icons/main/arduloader.png"))
+        self.ui.headLabel.setPixmap(QtGui.QPixmap(":/main/icons/main/arduloader.png"))
         self.setWindowIcon(QtGui.QIcon(":/main/icons/main/logo.png"))
         self.setBoards()
         
@@ -60,7 +58,7 @@ class ArduloaderWindow(QMainWindow):
     
     def onUploading(self):
         prev_cursor = self.ui.textEdit.textCursor()
-        self.ui.textEdit.moveCursor(QtGui.QTextCursor.End)
+        self.ui.textEdit.moveCursor(QtGui.QTextCursor.MoveOperation.End)
         self.ui.textEdit.insertPlainText (".")
         self.ui.textEdit.setTextCursor(prev_cursor)
     
@@ -93,7 +91,7 @@ class ArduloaderWindow(QMainWindow):
             self.ui.textEdit.append("Hex file not exists")
             return False
             
-        # TODO: 检查文件大小是否超多当前芯片允许的最大值
+        # TODO: 录矛虏茅脦脛录镁麓贸脨隆脢脟路帽鲁卢露脿碌卤脟掳脨戮脝卢脭脢脨铆碌脛脳卯麓贸脰碌
         return True
         
     def startUpload(self):
@@ -102,7 +100,7 @@ class ArduloaderWindow(QMainWindow):
             return
             
         self.uploader = Uploader()
-        self.connect(self.uploader.qobj, QtCore.SIGNAL(const.finish_sig), self.onUploadFinish)
+        self.uploader.notifier.finished.connect(self.onUploadFinish)
         self.uploader.resetUploadArgs(argsdict)
         
         self.ui.textEdit.clear()
@@ -113,7 +111,12 @@ class ArduloaderWindow(QMainWindow):
         self.timer.start(const.process_interval)
     
     def onOpenHexFile(self):
-        filename = QtGui.QFileDialog.getOpenFileName(self, "Choose a HEX file", ".", "HEX (*.hex)")
+        filename, _ = QtWidgets.QFileDialog.getOpenFileName(
+            self,
+            "Choose a HEX file",
+            ".",
+            "HEX (*.hex)",
+        )
         if filename == "":
             return
         index = self.ui.hexfileCombox.findText(filename)

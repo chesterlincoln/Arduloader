@@ -1,9 +1,9 @@
 #-*- coding: utf-8 -*-
-#1.如何在基于PyQt4的Python代码中使用图标资源文件(qrc文件)
+#1.如何在基于PyQt6的Python代码中使用图标资源文件(qrc文件)
 #答: QtGui.QIcon(":/app/icons/app/logo.ico")
 #其中:/app标识图标在qrc文件中的分支, 后面的icons/app/logo.ico标识图标在qrc文件中的路径
 #2.如何在使用py2exe转换后的exe文件中使用这些图标
-#答: 使用pyrcc4命令(安装PyQt4后会有此工具)通过命令pyrcc4 -py3 sample.qrc > sample.py
+#答: 使用pyrcc6命令(安装PyQt6后会有此工具)通过命令pyrcc6 -py3 sample.qrc > sample.py
 #将qrc文件中的图标编译为二进制数据存放到py文件中, 然后在你需要使用图标的python文件中
 #使用from sample.py import *加载图标资源即可
 
