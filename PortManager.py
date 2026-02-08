@@ -1,19 +1,6 @@
 #-*- coding: utf-8 -*-
-import importlib
-import os
-import sys
 from PyQt6.QtCore import QTimer
-
-def _load_list_ports():
-    repo_root = os.path.dirname(os.path.abspath(__file__))
-    original_path = list(sys.path)
-    sys.path = [path for path in sys.path if os.path.abspath(path or ".") != repo_root]
-    try:
-        return importlib.import_module("serial.tools.list_ports")
-    finally:
-        sys.path = original_path
-
-lp = _load_list_ports()
+from serial.tools import list_ports as lp
 
 class PortManager(object):
     def __init__(self, ui, queryinterval=1000, startmonitor=False):
@@ -22,7 +9,10 @@ class PortManager(object):
         self.querytimer = QTimer()
         self.querytimer.timeout.connect(self.__updateUiComPorts)
         self.com_list = []
-        self.__updateUiComPorts(showmsg=False)
+        self.ui.portCombox.clear()
+        self.ui.portCombox.setPlaceholderText("请插入设备")
+        self.ui.textEdit.append("请插入设备")
+        self.com_list = self.__getComInfoList()
         if startmonitor:
             self.startComPortMonitor()
         
@@ -31,10 +21,13 @@ class PortManager(object):
             com_list = self.__getComInfoList()
         
         # NEW ADDED
-        for comport in list(set(com_list) - set(self.com_list)):
+        added = list(set(com_list) - set(self.com_list))
+        for comport in added:
             self.ui.portCombox.addItem(comport)
             if showmsg:
                 self.ui.textEdit.append("New port found: %s" % comport)
+        if added:
+            self.ui.portCombox.setCurrentIndex(self.ui.portCombox.count() - 1)
         # NEW REMOVED
         for comport in list(set(self.com_list) - set(com_list)):
             index = self.ui.portCombox.findText(comport)

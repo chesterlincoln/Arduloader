@@ -13,7 +13,7 @@ hex file to a board over a serial port.
 ## Requirements
 - Python 3.13+
 - PyQt6
-- pyserial
+- pyserial (external dependency; no vendored `serial/` folder)
 
 ## Install and run (uv)
 ```bash

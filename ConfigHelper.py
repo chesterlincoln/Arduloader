@@ -57,9 +57,6 @@ class ConfigHelper:
             index = self.ui.portCombox.findText(com)
             if index != -1:
                 self.ui.portCombox.setCurrentIndex(index)
-            else:
-                self.ui.portCombox.addItem(com)
-                self.ui.portCombox.setCurrentIndex(self.ui.portCombox.count() - 1)
     
     def __updateUiAboutUi(self):
         style = self.getVal(self.SEC_UI, self.KEY_STYLE)
