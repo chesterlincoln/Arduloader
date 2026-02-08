@@ -11,8 +11,10 @@ __author__ = "apache"
 __version__ = "0.1"
 
 import sys
-from os import path, listdir, system
+from os import path, listdir
 from glob import glob
+from shutil import which
+import subprocess
 
 get_subdir_list = lambda _dir: [d for d in listdir(_dir) if path.isdir("%s/%s" % (_dir, d))]
     
@@ -35,15 +37,30 @@ def get_qrc_xml(topdir):
 
 def main(topdir, qrcfile):
     rcc_xml = get_qrc_xml(topdir)
-    open("tmp.qrc", 'w').write(rcc_xml)
-    return system("pyrcc4 -py3 tmp.qrc > %s" % qrcfile)
+    tmp_qrc = "tmp.qrc"
+    with open(tmp_qrc, "w", encoding="utf-8") as fh:
+        fh.write(rcc_xml)
+    pyrcc = which("pyrcc6")
+    if not pyrcc:
+        print("pyrcc6 not found. Please install PyQt6 tools.")
+        return 1
+    result = subprocess.run([pyrcc, "-py3", tmp_qrc], capture_output=True, text=True)
+    if result.returncode != 0:
+        sys.stdout.write(result.stdout)
+        sys.stderr.write(result.stderr)
+        return result.returncode
+    with open(qrcfile, "w", encoding="utf-8") as out:
+        out.write(result.stdout)
+    return 0
     
 if __name__ == "__main__":
     argc = len(sys.argv)
     if 1 < argc < 3:
-        print (u"生成二进制的图标资源文件\n"
-               "usage: genqrc.py icon-dir qrc-pyfile\n"
-               "sample: genqrc.py icons icons.py")
+        print(
+            "生成二进制的图标资源文件\n"
+            "usage: genqrc.py icon-dir qrc-pyfile\n"
+            "sample: genqrc.py icons icons.py"
+        )
         sys.exit(1)
     elif argc == 1:
         topdir, qrcfile = "icons", "icons.py"
@@ -51,6 +68,6 @@ if __name__ == "__main__":
         topdir, qrcfile = sys.argv[1], sys.argv[2]
         
     if main(topdir, qrcfile) == 0:
-        print "ok:)"
+        print("ok:)")
     else:
-        print "failed:("
+        print("failed:(")
