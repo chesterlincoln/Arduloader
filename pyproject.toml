@@ -4,6 +4,9 @@ version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
+authors = [
+    { name = "Apache" },
+]
 dependencies = [
     "PyQt6>=6.7.0",
     "pyserial>=3.5",
