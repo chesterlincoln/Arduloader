@@ -3,9 +3,10 @@ from PyQt6.QtCore import QTimer
 from serial.tools import list_ports as lp
 
 class PortManager(object):
-    def __init__(self, ui, queryinterval=1000, startmonitor=False):
+    def __init__(self, ui, queryinterval=1000, startmonitor=False, only_show_new=True):
         self.ui = ui
         self.queryinterval = queryinterval
+        self.only_show_new = only_show_new
         self.querytimer = QTimer()
         self.querytimer.timeout.connect(self.__updateUiComPorts)
         self.com_list = []
@@ -22,6 +23,8 @@ class PortManager(object):
         
         # NEW ADDED
         added = list(set(com_list) - set(self.com_list))
+        if added and self.only_show_new:
+            self.ui.portCombox.clear()
         for comport in added:
             self.ui.portCombox.addItem(comport)
             if showmsg:

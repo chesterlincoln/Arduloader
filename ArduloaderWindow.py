@@ -9,6 +9,8 @@ import const
 import BoardHelper
 
 from PyQt6 import QtCore, QtGui, QtWidgets
+from serial.tools import list_ports
+import serial
 
 def tostr(text):
     return str(text)
@@ -41,9 +43,10 @@ class ArduloaderWindow(QtWidgets.QMainWindow):
         if not ret:
             self.__boardsinfodict = {}
             return
-            
-        for boardname in self.__boardsinfodict.keys():
-            self.ui.mcuCombox.addItem(boardname)
+
+        self.ui.mcuCombox.clear()
+        self.ui.mcuCombox.addItem("Arduino Leonardo")
+        self.ui.mcuCombox.setEnabled(False)
 
     def onUploadFinish(self, ret, text):
         self.timer.stop()
@@ -98,11 +101,49 @@ class ArduloaderWindow(QtWidgets.QMainWindow):
         argsdict = self.getUploadArgs()
         if not self.checkUploadArgs(argsdict):
             return
-            
+
+        self.__pending_upload_args = argsdict
+        self.__boot_start_ports = self.__list_ports()
+        self.__boot_timer = QtCore.QElapsedTimer()
+        self.__boot_timer.start()
+        self.ui.textEdit.append("Waiting for bootloader port...")
+        self.__touch_bootloader(argsdict.get("comport"))
+        self.__boot_wait_timer = QtCore.QTimer()
+        self.__boot_wait_timer.timeout.connect(self.__checkBootloaderPort)
+        self.__boot_wait_timer.start(200)
+
+    def __list_ports(self):
+        return {p.device for p in list_ports.comports()}
+
+    def __touch_bootloader(self, port):
+        if not port:
+            return
+        try:
+            ser = serial.Serial(port, 1200)
+            ser.close()
+        except Exception as exc:
+            self.ui.textEdit.append("Bootloader touch failed: %s" % exc)
+
+    def __checkBootloaderPort(self):
+        current_ports = self.__list_ports()
+        added = list(current_ports - self.__boot_start_ports)
+        if added:
+            self.__boot_wait_timer.stop()
+            self.__pending_upload_args["comport"] = added[-1]
+            self.ui.textEdit.append("Bootloader port: %s" % added[-1])
+            self.__beginUpload(self.__pending_upload_args)
+            return
+
+        if self.__boot_timer.elapsed() > 5000:
+            self.__boot_wait_timer.stop()
+            self.ui.textEdit.append("Bootloader port not detected, using current port.")
+            self.__beginUpload(self.__pending_upload_args)
+
+    def __beginUpload(self, argsdict):
         self.uploader = Uploader()
         self.uploader.notifier.finished.connect(self.onUploadFinish)
         self.uploader.resetUploadArgs(argsdict)
-        
+
         self.ui.textEdit.clear()
         self.ui.textEdit.append("Start uploading\n")
         self.timer = QtCore.QTimer()
