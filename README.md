@@ -8,6 +8,7 @@ hex file to a board over a serial port.
 ## Features
 - GUI for selecting board, port, and hex file
 - Remembers last used hex file, board, and port in `config.ini`
+- GitHub Actions builds are manual. Use `gh workflow run build-packages -f runner=windows-latest -f python-version=3.11`
 - Simple Windows exe packaging script
 
 ## Requirements
