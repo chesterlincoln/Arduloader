@@ -1,11 +1,15 @@
 #-*- coding: utf-8 -*-
 
+import sys
 from distutils.core import setup
 import py2exe
 
 includes = ["PyQt6.QtGui", "PyQt6.QtCore", "PyQt6.QtWidgets"]
             
 dll_excludes = ["msvcm90.dll", "msvcp90.dll", "msvcr90.dll"]
+
+if len(sys.argv) == 1:
+    sys.argv.append("py2exe")
 
 setup(  version="0.1",
         description = "Arduino Hex Uploader",
