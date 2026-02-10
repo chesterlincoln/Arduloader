@@ -101,6 +101,9 @@ class ArduloaderWindow(QtWidgets.QMainWindow):
         argsdict = self.getUploadArgs()
         if not self.checkUploadArgs(argsdict):
             return
+        if not argsdict.get("comport"):
+            self.ui.textEdit.append("请插入设备或按复位后再尝试上传")
+            return
 
         self.__pending_upload_args = argsdict
         self.__boot_start_ports = self.__list_ports()
