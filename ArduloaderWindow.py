@@ -139,8 +139,9 @@ class ArduloaderWindow(QtWidgets.QMainWindow):
             return
 
         if self.__boot_timer.elapsed() > 5000:
-            self.__boot_timer.start()
-            self.ui.textEdit.append("未检测到 Bootloader 端口，请手动按复位")
+            self.__boot_wait_timer.stop()
+            self.ui.textEdit.append("未检测到 Bootloader 端口，尝试使用当前端口上传")
+            self.__beginUpload(self.__pending_upload_args)
 
     def __beginUpload(self, argsdict):
         self.uploader = Uploader()
