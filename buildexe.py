@@ -18,7 +18,7 @@ setup(  version="0.1",
         packages = [],
         py_modules = [],
         zipfile = None,
-        windows = [{"script":"main.py", "icon_resources":[(1, "./icons/main/logo.ico")]}],
+        windows = [{"script":"main.py", "icon_resources":[(1, "./icons/main/logo.ico")], "dest_base":"arduloader"}],
 		options = {   "py2exe":
                         {   "compressed": 2,
                             "bundle_files": 1,
