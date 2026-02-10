@@ -135,9 +135,8 @@ class ArduloaderWindow(QtWidgets.QMainWindow):
             return
 
         if self.__boot_timer.elapsed() > 5000:
-            self.__boot_wait_timer.stop()
-            self.ui.textEdit.append("Bootloader port not detected, using current port.")
-            self.__beginUpload(self.__pending_upload_args)
+            self.__boot_timer.start()
+            self.ui.textEdit.append("Bootloader port not detected, waiting...")
 
     def __beginUpload(self, argsdict):
         self.uploader = Uploader()
