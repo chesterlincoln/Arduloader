@@ -102,15 +102,16 @@ class ArduloaderWindow(QtWidgets.QMainWindow):
         if not self.checkUploadArgs(argsdict):
             return
         if not argsdict.get("comport"):
-            self.ui.textEdit.append("请插入设备或按复位后再尝试上传")
+            self.ui.textEdit.append("未检测到端口，请插入设备后再上传")
             return
 
         self.__pending_upload_args = argsdict
         self.__boot_start_ports = self.__list_ports()
         self.__boot_timer = QtCore.QElapsedTimer()
         self.__boot_timer.start()
-        self.ui.textEdit.append("Waiting for bootloader port...")
+        self.ui.textEdit.append("自动触发进入 Bootloader...")
         self.__touch_bootloader(argsdict.get("comport"))
+        self.ui.textEdit.append("等待 Bootloader 端口出现...")
         self.__boot_wait_timer = QtCore.QTimer()
         self.__boot_wait_timer.timeout.connect(self.__checkBootloaderPort)
         self.__boot_wait_timer.start(200)
@@ -139,7 +140,7 @@ class ArduloaderWindow(QtWidgets.QMainWindow):
 
         if self.__boot_timer.elapsed() > 5000:
             self.__boot_timer.start()
-            self.ui.textEdit.append("Bootloader port not detected, waiting...")
+            self.ui.textEdit.append("未检测到 Bootloader 端口，请手动按复位")
 
     def __beginUpload(self, argsdict):
         self.uploader = Uploader()
